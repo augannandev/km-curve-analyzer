@@ -51,7 +51,7 @@ class KMAnalyzer:
         img_b64 = base64.b64encode(buf.getvalue()).decode()
         try:
             res = self.client.messages.create(
-                model="claude-3-opus-20240229", max_tokens=1024,
+                model="claude-3-7-sonnet-20250219", max_tokens=1024, #claude-3-5-haiku-20241022 #claude-3-7-sonnet-20250219 #claude-3-opus-20240229
                 messages=[
                     {"role":"user","content":[
                         {"type":"text","text":question},
@@ -168,7 +168,13 @@ with tab1:
                                         st.error(f"No data at or before {t} months for '{curve}'.")
                                     else:
                                         row = vt.sort_values("time_months", ascending=False).iloc[0]
-                                        st.success(f"🎯 Survival probability: {row['survival_prob']}% at {row['time_months']} months for '{curve}'.")
+                                        # Format survival probability without literal % sign
+                                        prob = row["survival_prob"]
+                                        if prob <= 1:
+                                            prob_str = f"{prob:.4f}"
+                                        else:
+                                            prob_str = f"{prob:.1f}%"
+                                        st.success(f"🎯 Survival probability: {prob_str} at {t} months for '{curve}'.")
                         except Exception as e:
                             st.error(f"Lookup failed: {e}")
 
@@ -189,9 +195,13 @@ with tab2:
                 st.warning("Please upload an image.")
             else:
                 img = Image.open(img_file).convert("RGB")
-                st.image(img, use_column_width=True)
+                try:
+                    st.image(img, use_container_width=True)
+                except TypeError:
+                    # Fallback for older Streamlit versions
+                    st.image(img, use_column_width=True)
                 st.info("🧠 Analyzing image...")
                 resp = analyzer.ask_with_image_and_question(iq, img)
-                st.write(resp)
+                st.success(resp)
 
     st.divider()
