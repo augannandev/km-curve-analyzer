@@ -140,6 +140,17 @@ st.markdown(
         border-color: #6a0dad;
         border-style: dashed;
     }
+    
+    /* Sidebar styling */
+    [data-testid="stSidebar"] {
+        background: linear-gradient(180deg, #f9f5ff 0%, #ffffff 100%);
+        border-right: 1px solid #f0e6ff;
+    }
+    
+    [data-testid="stSidebar"] .stMarkdown h2 {
+        color: #6a0dad;
+        font-weight: 600;
+    }
     </style>''',
     unsafe_allow_html=True
 )
@@ -150,7 +161,7 @@ st.markdown("<h1 style='text-align:center; color:#6a0dad; margin:0 0 20px 0; fon
 
 # Sidebar with app description
 # Add logo to sidebar
-logo_path = "assets/imo_logo.png"
+logo_path = "assets/im_logo2.png"
 st.sidebar.image(logo_path, width=180)
 
 st.sidebar.markdown("""
