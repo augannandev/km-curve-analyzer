@@ -4,6 +4,7 @@ import anthropic
 import json, base64, io, re, warnings
 import pandas as pd
 from PIL import Image
+import os
 
 warnings.filterwarnings("ignore", category=UserWarning, module="openpyxl")
 
@@ -82,7 +83,11 @@ api_key = st.secrets["anthropic"]["api_key"]
 # Increase global font sizes using custom CSS
 st.markdown(
     '''<style>
+    /* Import Raleway font */
+    @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&display=swap');
+    
     .stApp * {
+        font-family: 'Raleway', sans-serif !important;
         font-size: 18px !important;
     }
     h1 {
@@ -94,11 +99,60 @@ st.markdown(
     h3 {
         font-size: 1.75rem !important;
     }
+    /* IMO Health purple theme */
+    .stApp a {
+        color: #6a0dad !important;
+    }
+    .stButton>button {
+        background-color: #6a0dad !important;
+        color: white !important;
+        border-radius: 20px !important;
+        padding: 4px 25px !important;
+        font-weight: 600 !important;
+    }
+    .stSuccess {
+        background-color: rgba(106, 13, 173, 0.2) !important;
+        border-left-color: #6a0dad !important;
+    }
+    /* Card styling */
+    .card {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        margin-bottom: 1rem;
+    }
+    /* Tab styling */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 8px;
+    }
+    .stTabs [data-baseweb="tab"] {
+        border-radius: 4px 4px 0px 0px;
+        padding: 10px 16px;
+        background-color: #f9f9f9;
+    }
+    .stTabs [aria-selected="true"] {
+        background-color: #6a0dad !important;
+        color: white !important;
+    }
+    /* File uploader styling */
+    .stFileUploader div[data-testid="stFileUploadDropzone"] {
+        border-color: #6a0dad;
+        border-style: dashed;
+    }
     </style>''',
     unsafe_allow_html=True
 )
 
+# Main header with IMO Health logo & app title
+# Centered title with IMO Health purple
+st.markdown("<h1 style='text-align:center; color:#6a0dad; margin:0 0 20px 0; font-family:Raleway, sans-serif; font-weight:600;'>KM Analyzer</h1>", unsafe_allow_html=True)
+
 # Sidebar with app description
+# Add logo to sidebar
+logo_path = "assets/imo_logo.png"
+st.sidebar.image(logo_path, width=180)
+
 st.sidebar.markdown("""
 ## 📈 KM Analyzer
 **Survival & image analysis**  
@@ -106,20 +160,16 @@ st.sidebar.markdown("""
 - Query with natural-language  
 """, unsafe_allow_html=True)
 
-# Centered, styled main title
-st.markdown(
-    "<h1 style='text-align:center; color:#2E86AB; margin-top:0;'>KM Analyzer</h1>",
-    unsafe_allow_html=True
-)
-
-#st.title("KM Analyzer App")
-
 if not api_key:
     st.error("API key not found in .streamlit/secrets.toml")
     st.stop()
 
 analyzer = KMAnalyzer(api_key)
 
+# Wrap content in a card
+st.markdown('<div class="card">', unsafe_allow_html=True)
+
+# Create tabs
 tab1, tab2 = st.tabs(["Survival Probability", "Image Analysis"])
 
 with tab1:
@@ -205,3 +255,9 @@ with tab2:
                 st.success(resp)
 
     st.divider()
+
+# Close the card div
+st.markdown('</div>', unsafe_allow_html=True)
+
+# Footer
+st.markdown("<div style='text-align:center; margin-top:30px; color:#666; font-size:0.8rem;'>&copy; 2025 IMO Health. All rights reserved.</div>", unsafe_allow_html=True)
