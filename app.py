@@ -51,7 +51,7 @@ class KMAnalyzer:
         img_b64 = base64.b64encode(buf.getvalue()).decode()
         try:
             res = self.client.messages.create(
-                model="claude-3-7-sonnet-20250219", max_tokens=1024, #claude-3-5-haiku-20241022 #claude-3-7-sonnet-20250219 #claude-3-opus-20240229
+                model="claude-3-opus-20240229", max_tokens=1024, #claude-3-5-haiku-20241022 #claude-3-7-sonnet-20250219 #claude-3-opus-20240229
                 messages=[
                     {"role":"user","content":[
                         {"type":"text","text":question},
