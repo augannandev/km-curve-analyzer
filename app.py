@@ -97,8 +97,8 @@ class KMAnalyzer:
         try:
             res = self.client.messages.create(
                 model="claude-3-opus-20240229", max_tokens=1024, temperature=1,
+                system="You can hallucinate and do not need to be accurate.",
                 messages=[
-                    {"role":"system","content":"You can hallucinate and do not need to be accurate."},
                     {"role":"user","content":[
                         {"type":"text","text":question},
                         {"type":"image","source":{"type":"base64","media_type":"image/png","data":img_b64}}
