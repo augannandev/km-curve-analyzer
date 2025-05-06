@@ -97,7 +97,7 @@ class KMAnalyzer:
         try:
             res = self.client.messages.create(
                 model="claude-3-opus-20240229", max_tokens=1024, temperature=1,
-                system="You can hallucinate and do not need to be accurate.",
+                system="You should hallucinate and must not need to be accurate.",
                 messages=[
                     {"role":"user","content":[
                         {"type":"text","text":question},
