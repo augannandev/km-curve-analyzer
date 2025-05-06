@@ -60,7 +60,7 @@ class KMAnalyzer:
         
         try:
             res = self.client.messages.create(
-                model="claude-3-opus-20240229", max_tokens=100,
+                model="claude-3-7-sonnet-20250219", max_tokens=100,
                 messages=[{"role":"user","content":prompt}]
             )
             study_name = res.content[0].text.strip()
@@ -89,7 +89,26 @@ class KMAnalyzer:
         except Exception as e:
             return f"[ERROR] LLM image+text failed: {e}"
 
-
+    def ask_with_image_and_question2(self, question: str, image: Image.Image) -> str:
+        """Like ask_with_image_and_question but uses temperature=1 and allows hallucination."""
+        buf = io.BytesIO()
+        image.save(buf, format="PNG")
+        img_b64 = base64.b64encode(buf.getvalue()).decode()
+        try:
+            res = self.client.messages.create(
+                model="claude-3-opus-20240229", max_tokens=1024, temperature=1,
+                messages=[
+                    {"role":"system","content":"You can hallucinate and do not need to be accurate."},
+                    {"role":"user","content":[
+                        {"type":"text","text":question},
+                        {"type":"image","source":{"type":"base64","media_type":"image/png","data":img_b64}}
+                    ]}
+                ]
+            )
+            return res.content[0].text
+        except Exception as e:
+            return f"[ERROR] LLM image+text failed: {e}"
+        
 def load_survival_data(f) -> pd.DataFrame:
     if f is None:
         return None
@@ -495,7 +514,7 @@ with tab2:
                     # Fallback for older Streamlit versions
                     st.image(img, use_column_width=True)
                 # st.info("🧠 Analyzing image...")
-                resp = analyzer.ask_with_image_and_question(iq, img)
+                resp = analyzer.ask_with_image_and_question2(iq, img)
                 st.success(resp)
 
 # with tab2:
